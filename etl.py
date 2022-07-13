@@ -53,7 +53,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     df_port.createOrReplaceTempView('port_mapping')
 
     # extract and transform columns to create fact_immigration table
-    spark.sql(ProdQueries.fact_immigration_prod).createOrReplaceTempView('fact_immigration/')
+    spark.sql(ProdQueries.fact_immigration_prod).createOrReplaceTempView('fact_immigration')
 
     # clean & format data further
     # filter any rows that do not have valid arrival city or arrival date
@@ -70,7 +70,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     # write fact_immigration table to parquet files partitioned by arrival_date
     fact_immigration_table.write.partitionBy('arrival_date') \
                      .mode('overwrite') \
-                     .parquet(os.path.join(output_path, 'fact_immigration'))
+                     .parquet(os.path.join(output_path, 'fact_immigration/'))
 
 
     ### dim_immigrant table prep for prod load ###
@@ -85,7 +85,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     df_country.createOrReplaceTempView('country_mapping')
 
     # extract and transform columns to create dim_immigrant table
-    spark.sql(ProdQueries.dim_immigrant_prod).createOrReplaceTempView('dim_immigrant/')
+    spark.sql(ProdQueries.dim_immigrant_prod).createOrReplaceTempView('dim_immigrant')
 
     # clean & format data further
     # filter any rows that do not have valid gender or age
@@ -98,7 +98,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
 
     # write dim_immigrant table to a parquet file
     dim_immigrant_table.write.mode('overwrite') \
-                             .parquet(os.path.join(output_path, 'dim_immigrant'))
+                             .parquet(os.path.join(output_path, 'dim_immigrant/'))
 
 
 def process_temperature_data(spark, input_path, output_path, temperature_data_path):
@@ -118,7 +118,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     df_temp.createOrReplaceTempView('stg_temperature')
     
     # extract and transform columns to create dim_temperature table
-    spark.sql(ProdQueries.dim_temperature_prod).createOrReplaceTempView('dim_temperature/')
+    spark.sql(ProdQueries.dim_temperature_prod).createOrReplaceTempView('dim_temperature')
 
     # clean & format data further
     # filter any rows before 1980 to only keep necessary data
@@ -131,7 +131,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     
     # write dim_temperature table to a parquet file
     dim_temperature_table.write.mode('overwrite') \
-                               .parquet(os.path.join(output_path, 'dim_temperature'))
+                               .parquet(os.path.join(output_path, 'dim_temperature/'))
 
 
 def process_demographics_data(spark, input_path, output_path, demographics_data_path):
