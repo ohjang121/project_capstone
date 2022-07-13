@@ -26,7 +26,7 @@ class ProdQueries:
     '''
 
     dim_immigrant_prod = '''
-    SELECT string(i.cicid) as immigration_id,
+    SELECT string(int(i.cicid)) as immigration_id,
     c1.country as citizenship_country,
     c2.country as residence_country,
     int(i.i94bir) as age,
