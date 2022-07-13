@@ -1,8 +1,9 @@
 class ProdQueries:
 
     fact_immigration_prod = '''
-    SELECT string(i.cicid) as immigration_id,
-    to_date(string(int(i.i94yr)) || '0' || string(int(i.i94mon)) || '01', 'yyyy-mm-dd') as imm_report_month, -- need to be date formatted
+    SELECT string(int(i.cicid)) as immigration_id,
+    int(i.i94yr) as imm_year,
+    int(i.i94mon) as imm_month,
     case when i.i94mode = 1 then 'Air'
          when i.i94mode = 2 then 'Sea'
          when i.i94mode = 3 then 'Land'
@@ -32,8 +33,8 @@ class ProdQueries:
     int(i.biryear) as birthyear,
     i.gender
     FROM stg_immigration i
-    LEFT JOIN country_mapping c1 on lower(i.i94cit) = lower(c1.code)
-    LEFT JOIN country_mapping c2 on lower(i.i94res) = lower(c2.code)
+    LEFT JOIN country_mapping c1 on int(i.i94cit) = int(c1.code)
+    LEFT JOIN country_mapping c2 on int(i.i94res) = int(c2.code)
     '''
 
     # need pk
@@ -42,8 +43,8 @@ class ProdQueries:
     SELECT date(dt) as temp_report_month,
     city,
     country,
-    averagetemperature as avg_temp,
-    averagetemperatureuncertainty as avg_temp_uncertainty
+    float(averagetemperature) as avg_temp,
+    float(averagetemperatureuncertainty) as avg_temp_uncertainty
     FROM stg_temperature
     '''
 
@@ -53,12 +54,12 @@ class ProdQueries:
     SELECT city,
     state_code,
     race,
-    median_age,
-    male_population,
-    female_population,
-    total_population,
-    number_of_veterans,
-    foreign_born,
-    avg_household_size
+    float(median_age) as median_age,
+    int(male_population) as male_population,
+    int(female_population) as female_population,
+    int(total_population) as total_population,
+    int(number_of_veterans) as number_of_veterans,
+    int(foreign_born) as foreign_born,
+    float(avg_household_size) as avg_household_size
     FROM stg_demographics
     '''

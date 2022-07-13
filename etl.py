@@ -67,10 +67,10 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     # date format combined year and month column
     #fact_immigration_table = fact_immigration_table.withColumn('imm_report_month', to_date(col('imm_report_month', 'yyyy-mm-dd')))
     
-    # write fact_immigration table to parquet files partitioned by arrival_date
-    fact_immigration_table.write.partitionBy('arrival_date') \
-                     .mode('overwrite') \
-                     .parquet(os.path.join(output_path, 'fact_immigration/'))
+    # write fact_immigration table to parquet files
+    # do not partition by arrival_date because Redshift does not load the partitioned column into the table
+    fact_immigration_table.write.mode('overwrite') \
+                                .parquet(os.path.join(output_path, 'fact_immigration/'))
 
 
     ### dim_immigrant table prep for prod load ###
@@ -96,7 +96,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     AND age is not null
     ''')
 
-    # write dim_immigrant table to a parquet file
+    # write dim_immigrant table to parquet files
     dim_immigrant_table.write.mode('overwrite') \
                              .parquet(os.path.join(output_path, 'dim_immigrant/'))
 
@@ -129,7 +129,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     AND temp_report_month >= date('1980-01-01')
     ''').withColumn('temp_id', monotonically_increasing_id())
     
-    # write dim_temperature table to a parquet file
+    # write dim_temperature table to parquet files
     dim_temperature_table.write.mode('overwrite') \
                                .parquet(os.path.join(output_path, 'dim_temperature/'))
 
