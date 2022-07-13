@@ -111,22 +111,22 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     temperature_data = os.path.join(input_path, temperature_data_path)
 
     # read temperature data file
-    # filter by country = United States
     # define temp view to query
     df_temp = spark.read.option('header', 'true').csv(temperature_data)
-    df_temp = df_temp.where(df_temp.country == 'United States')
     df_temp.createOrReplaceTempView('stg_temperature')
     
     # extract and transform columns to create dim_temperature table
     spark.sql(ProdQueries.dim_temperature_prod).createOrReplaceTempView('dim_temperature')
 
     # clean & format data further
+    # filter by country = United States
     # filter any rows before 1980 to only keep necessary data
     # add a surrogate key for primary key
     dim_temperature_table = spark.sql('''
     SELECT *
     FROM dim_temperature
-    WHERE temp_report_month >= date('1980-01-01')
+    WHERE country = 'United States'
+    AND temp_report_month >= date('1980-01-01')
     ''').withColumn('temp_id', monotonically_increasing_id())
     
     # write dim_temperature table to a parquet file
