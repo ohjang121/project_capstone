@@ -169,7 +169,7 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     df_demo.createOrReplaceTempView('stg_demographics') 
 
     # extract and transform columns to create dim_demographics table
-    dim_demographics_table = spark.sql(ProdQueries.dim_demographics_prod)
+    spark.sql(ProdQueries.dim_demographics_prod).createOrReplaceTempView('stg_demographics')
 
     # clean & format data further
     # add a surrogate key for primary key
