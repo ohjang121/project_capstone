@@ -154,7 +154,7 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     # format columns in snakecase without whitespace
     # define temp view to query
     df_demo = df_demo.withColumnRenamed('City', 'city') \
-        .withColumnRenamed('State Code', 'state') \
+        .withColumnRenamed('State Code', 'state_code') \
         .withColumnRenamed('Race', 'race') \
         .withColumnRenamed('Median Age', 'median_age') \
         .withColumnRenamed('Male Population', 'male_population') \
