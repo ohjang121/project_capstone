@@ -4,7 +4,17 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, monotonically_increasing_id
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+import logging
 from load_tables import ProdQueries
+
+### Logging Handling ###
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+if not logger.handlers:
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.DEBUG)
+    logger.addHandler(sh)
 
 config = configparser.ConfigParser()
 config.read('dl.cfg')
@@ -28,8 +38,11 @@ def create_spark_session():
 
 def process_immigration_data(spark, input_path, output_path, immigration_data_path, port_mapping_data_path, country_mapping_data_path):
     '''
-    Load the song data stored in the input_data parameter into a Spark dataframe
-    Create songs and artists tables based on the song_data dataframe by writing them to parquet files
+    Load the immigration, port_mapping, and country_mapping data stored in the input_path parameter into a Spark dataframe
+    Transform staging data with pre-written queries in ProdQueries class
+    Write following 2 table outputs in parquet in the output_path parameter:
+        fact_immigration
+        dim_immigrant
     '''
 
     ### fact_immigration table prep for prod load ###
@@ -41,6 +54,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     
     # read immigration data files
     # define temp view to query
+    logger.info('Reading immigration data into stg_immigration...')
     df_imm = spark.read.parquet(immigration_data)
     df_imm.createOrReplaceTempView('stg_immigration')
 
@@ -49,6 +63,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
 
     # read port mapping data file
     # define temp view to query
+    logger.info('Reading port_mapping data into port_mapping...')
     df_port = spark.read.option('header', 'true').csv(port_mapping_data)
     df_port.createOrReplaceTempView('port_mapping')
 
@@ -72,6 +87,10 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     fact_immigration_table.write.mode('overwrite') \
                                 .parquet(os.path.join(output_path, 'fact_immigration/'))
 
+    logger.info('Successfully wrote fact_immigration table output into parquet files!')
+    
+    # check data types due to copy error in redshift
+    fact_immigration_table.printSchema()
 
     ### dim_immigrant table prep for prod load ###
     ### data formatting achieved in the SQL input ###
@@ -81,6 +100,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
 
     # read country mapping data file
     # define temp view to query
+    logger.info('Reading country_mapping data into country_mapping...')
     df_country = spark.read.option('header', 'true').csv(country_mapping_data)
     df_country.createOrReplaceTempView('country_mapping')
 
@@ -100,11 +120,17 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     dim_immigrant_table.write.mode('overwrite') \
                              .parquet(os.path.join(output_path, 'dim_immigrant/'))
 
+    logger.info('Successfully wrote dim_immigrant table output into parquet files!')
+    
+    # check data types due to copy error in redshift
+    dim_immigrant_table.printSchema()
 
 def process_temperature_data(spark, input_path, output_path, temperature_data_path):
     '''
-    Load the log data stored in the input_data parameter into a Spark dataframe
-    Create users, time, and songplays tables based on the log_data dataframe by writing them to parquet files
+    Load the temperature data stored in the input_path parameter into a Spark dataframe
+    Transform staging data with pre-written queries in ProdQueries class
+    Write following 1 table output in parquet in the output_path parameter:
+        dim_temperature
     '''
     
     # get filepath to temperature data file
@@ -112,6 +138,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
 
     # read temperature data file
     # define temp view to query
+    logger.info('Reading temperature data into stg_temperature...')
     df_temp = spark.read.option('header', 'true').csv(temperature_data)
     df_temp.createOrReplaceTempView('stg_temperature')
     
@@ -138,19 +165,24 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     dim_temperature_table.write.mode('overwrite') \
                                .parquet(os.path.join(output_path, 'dim_temperature/'))
 
+    logger.info('Successfully wrote dim_temperature table output into parquet files!')
+    
     # check data types due to copy error in redshift
-    #dim_temperature_table.printSchema()
+    dim_temperature_table.printSchema()
 
 def process_demographics_data(spark, input_path, output_path, demographics_data_path):
     '''
-    Load the log data stored in the input_data parameter into a Spark dataframe
-    Create users, time, and songplays tables based on the log_data dataframe by writing them to parquet files
+    Load the demographics data stored in the input_path parameter into a Spark dataframe
+    Transform staging data with pre-written queries in ProdQueries class
+    Write following 1 table output in parquet in the output_path parameter:
+        dim_demographics
     '''
     
     # get filepath to demographics data file
     demographics_data = os.path.join(input_path, demographics_data_path)
 
     # read demographics data file
+    logger.info('Reading demographics data into stg_demographics...')
     df_demo = spark.read.option('header', 'true').option('delimiter', ';').csv(demographics_data)
 
     # format columns in snakecase without whitespace
@@ -193,6 +225,8 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     dim_demographics_table.write.mode('overwrite') \
                                 .parquet(os.path.join(output_path, 'dim_demographics/'))
 
+    logger.info('Successfully wrote dim_demographics table output into parquet files!')
+    
     # check data types due to copy error in redshift
     dim_demographics_table.printSchema()
 
