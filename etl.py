@@ -114,7 +114,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     # filter by country = United States
     # define temp view to query
     df_temp = spark.read.option('header', 'true').csv(temperature_data)
-    df_temp = df_temp.where(df.country == 'United States')
+    df_temp = df_temp.where(df_temp.country == 'United States')
     df_temp.createOrReplaceTempView('stg_temperature')
     
     # extract and transform columns to create dim_temperature table
