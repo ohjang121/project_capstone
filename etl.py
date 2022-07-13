@@ -151,8 +151,8 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     df_demo = df_demo.withColumnRenamed('City', 'city') \
         .withColumnRenamed('State Code', 'state_code') \
         .withColumnRenamed('Race', 'race') \
-        .withColumnRenamed('Median Age', 'median_age') \ 
-        .withColumnRenamed('Male Population', 'male_population') \ 
+        .withColumnRenamed('Median Age', 'median_age') \
+        .withColumnRenamed('Male Population', 'male_population') \
         .withColumnRenamed('Female Population', 'female_population') \
         .withColumnRenamed('Total Population', 'total_population') \
         .withColumnRenamed('Number of Veterans', 'number_of_veterans') \
