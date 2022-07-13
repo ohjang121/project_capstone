@@ -2,7 +2,7 @@ class ProdQueries:
 
     fact_immigration_prod = '''
     SELECT string(i.cicid) as immigration_id,
-    string(int(i.i94yr)) || '0' || string(int(i.i94mon)) || '01' as imm_report_month, -- need to be date formatted
+    to_date(string(int(i.i94yr)) || '0' || string(int(i.i94mon)) || '01', 'yyyy-mm-dd') as imm_report_month, -- need to be date formatted
     case when i.i94mode = 1 then 'Air'
          when i.i94mode = 2 then 'Sea'
          when i.i94mode = 3 then 'Land'

@@ -65,7 +65,7 @@ def process_immigration_data(spark, input_path, output_path, immigration_data_pa
     ''')
     
     # date format combined year and month column
-    fact_immigration_table = fact_immigration_table.withColumn('imm_report_month', to_date(col('imm_report_month', 'yyyy-mm-dd')))
+    #fact_immigration_table = fact_immigration_table.withColumn('imm_report_month', to_date(col('imm_report_month', 'yyyy-mm-dd')))
     
     # write fact_immigration table to parquet files partitioned by arrival_date
     fact_immigration_table.write.partitionBy('arrival_date') \
