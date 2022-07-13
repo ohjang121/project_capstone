@@ -13,7 +13,6 @@ class ProdQueries:
     coalesce(i.i94addr, p.state) as arrival_state,
     date_add(date('1960-01-01'), int(arrdate)) as arrival_date,
     date_add(date('1960-01-01'), int(depdate)) as departure_date,
-    i.dtaddto as admitted_to_date, -- need to be date formatted, currently mmddyyyy
     case when i.i94visa = 1 then 'Business'
          when i.i94visa = 2 then 'Pleasure'
          when i.i94visa = 3 then 'Student'

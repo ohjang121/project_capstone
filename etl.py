@@ -148,12 +148,17 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
 
     # format columns in snakecase without whitespace
     # define temp view to query
-    df_demo = df_demo.select(['City', 'State Code', 'Race', 'Median Age', 'Male Population', 'Female Population', \
-        'Total Population', 'Number of Veterans', 'Foreign-born', 'Average Household Size'])
+    df_demo = df_demo.withColumnRenamed('City', 'city')\
+        .withColumnRenamed('State Code', 'state_code')\
+        .withColumnRenamed('Race', 'race')\
+        .withColumnRenamed('Median Age', 'median_age')\ 
+        .withColumnRenamed('Male Population', 'male_population')\ 
+        .withColumnRenamed('Female Population', 'female_population')\
+        .withColumnRenamed('Total Population', 'total_population')\
+        .withColumnRenamed('Number of Veterans', 'number_of_veterans')\
+        .withColumnRenamed('Foreign-born', 'foreign_born')\
+        .withColumnRenamed('Average Household Size', 'avg_household_size')
     
-    new_demo_columns = ['city', 'state_code', 'race', 'median_age', 'male_population', 'female_population', \
-        'total_population', 'number_of_veterans', 'foreign_born', 'avg_household_size']
-    df_demo = rename_columns(df_demo, new_demo_columns)
     df_demo.createOrReplaceTempView('stg_demographics') 
 
     # extract and transform columns to create dim_demographics table
