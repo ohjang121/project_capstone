@@ -123,7 +123,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     # filter any rows before 1980 to only keep necessary data
     # unique key by temp_report_month || city || country
     dim_temperature_table = spark.sql('''
-    SELECT row_number() over (partition by temp_report_month, city, country order by avg_temp) as temp_id,
+    SELECT row_number() over (order by temp_report_month, city) as temp_id,
     temp_report_month,
     city,
     country,
@@ -138,7 +138,8 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     dim_temperature_table.write.mode('overwrite') \
                                .parquet(os.path.join(output_path, 'dim_temperature/'))
 
-    dim_temperature_table.printSchema()
+    # check data types due to copy error in redshift
+    #dim_temperature_table.printSchema()
 
 def process_demographics_data(spark, input_path, output_path, demographics_data_path):
     '''
@@ -174,7 +175,7 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     # add a surrogate key for primary key
     # unique by city || state_code || race
     dim_demographics_table = spark.sql('''
-    SELECT row_number() over (partition by city, state_code, race order by total_population) as demo_id,
+    SELECT row_number() over (order by city, state_code, race) as demo_id,
     city,
     state_code,
     race,
@@ -192,6 +193,8 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     dim_demographics_table.write.mode('overwrite') \
                                 .parquet(os.path.join(output_path, 'dim_demographics/'))
 
+    # check data types due to copy error in redshift
+    #dim_demographics_table.printSchema()
 
 def main():
 
@@ -208,9 +211,9 @@ def main():
     temperature_data_path = config['DATA']['TEMPERATURE']
     demographics_data_path = config['DATA']['DEMOGRAPHICS']
     
-    #process_immigration_data(spark, input_path, output_path, immigration_data_path, port_mapping_data_path, country_mapping_data_path)    
+    process_immigration_data(spark, input_path, output_path, immigration_data_path, port_mapping_data_path, country_mapping_data_path)    
     process_temperature_data(spark, input_path, output_path, temperature_data_path) 
-    #process_demographics_data(spark, input_path, output_path, demographics_data_path) 
+    process_demographics_data(spark, input_path, output_path, demographics_data_path) 
     
     spark.stop()
 
