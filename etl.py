@@ -121,13 +121,18 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     # clean & format data further
     # filter by country = United States
     # filter any rows before 1980 to only keep necessary data
-    # add a surrogate key for primary key
+    # unique key by temp_report_month || city || country
     dim_temperature_table = spark.sql('''
-    SELECT *
+    SELECT row_number() over (partition by temp_report_month, city, country order by avg_temp) as temp_id,
+    temp_report_month,
+    city,
+    country,
+    avg_temp,
+    avg_temp_uncertainty
     FROM dim_temperature
     WHERE country = 'United States'
     AND temp_report_month >= date('1980-01-01')
-    ''').withColumn('temp_id', monotonically_increasing_id())
+    ''')
     
     # write dim_temperature table to parquet files
     dim_temperature_table.write.mode('overwrite') \
@@ -149,7 +154,7 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     # format columns in snakecase without whitespace
     # define temp view to query
     df_demo = df_demo.withColumnRenamed('City', 'city') \
-        .withColumnRenamed('State Code', 'state_code') \
+        .withColumnRenamed('State Code', 'state') \
         .withColumnRenamed('Race', 'race') \
         .withColumnRenamed('Median Age', 'median_age') \
         .withColumnRenamed('Male Population', 'male_population') \
@@ -167,8 +172,21 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     # clean & format data further
     # add a surrogate key for primary key
     # unique by city || state_code || race
-    dim_demographics_table = dim_demographics_table.withColumn('demo_id', monotonically_increasing_id())
-    
+    dim_demographics_table = spark.sql('''
+    SELECT row_number() over (partition by city, state, race order by total_population) as demo_id,
+    city,
+    state,
+    race,
+    median_age,
+    male_population,
+    female_population,
+    total_population,
+    number_of_veterans,
+    foreign_born,
+    avg_household_size
+    FROM stg_demographics
+    ''')
+
     # write dim_demographics table to a parquet file
     dim_demographics_table.write.mode('overwrite') \
                                 .parquet(os.path.join(output_path, 'dim_demographics/'))

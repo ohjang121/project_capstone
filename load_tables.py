@@ -37,22 +37,23 @@ class ProdQueries:
     LEFT JOIN country_mapping c2 on int(i.i94res) = int(c2.code)
     '''
 
-    # need pk
+    # need pk - temp_report_month || city || country
 
     dim_temperature_prod = '''
     SELECT date(dt) as temp_report_month,
     city,
     country,
-    float(averagetemperature) as avg_temp,
-    float(averagetemperatureuncertainty) as avg_temp_uncertainty
+    avg(float(averagetemperature)) as avg_temp,
+    avg(float(averagetemperatureuncertainty)) as avg_temp_uncertainty
     FROM stg_temperature
+    GROUP BY 1,2,3
     '''
 
     # need pk - city || state_code || race
 
     dim_demographics_prod = '''
     SELECT city,
-    state_code,
+    state,
     race,
     float(median_age) as median_age,
     int(male_population) as male_population,
