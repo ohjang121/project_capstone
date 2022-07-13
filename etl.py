@@ -194,7 +194,7 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
                                 .parquet(os.path.join(output_path, 'dim_demographics/'))
 
     # check data types due to copy error in redshift
-    #dim_demographics_table.printSchema()
+    dim_demographics_table.printSchema()
 
 def main():
 
