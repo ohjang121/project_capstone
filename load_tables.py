@@ -53,7 +53,7 @@ class ProdQueries:
 
     dim_demographics_prod = '''
     SELECT city,
-    state,
+    state_code,
     race,
     float(median_age) as median_age,
     int(male_population) as male_population,

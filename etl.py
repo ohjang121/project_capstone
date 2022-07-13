@@ -173,9 +173,9 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
     # add a surrogate key for primary key
     # unique by city || state_code || race
     dim_demographics_table = spark.sql('''
-    SELECT row_number() over (partition by city, state, race order by total_population) as demo_id,
+    SELECT row_number() over (partition by city, state_code, race order by total_population) as demo_id,
     city,
-    state,
+    state_code,
     race,
     median_age,
     male_population,
