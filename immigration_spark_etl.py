@@ -16,8 +16,13 @@ if not logger.handlers:
     sh.setLevel(logging.DEBUG)
     logger.addHandler(sh)
 
+# IMPORTANT: Need to update airflow root path depending on the user
+airflow_root_path = '/Users/joh/airflow'
+config_path = os.path.join(airflow_root_path, 'dl.cfg')
 config = configparser.ConfigParser()
-config.read('dl.cfg')
+config.read(config_path)
+
+logger.info(config_path)
 
 os.environ['AWS_ACCESS_KEY_ID']=config['AWS']['AWS_ACCESS_KEY_ID']
 os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS']['AWS_SECRET_ACCESS_KEY']
