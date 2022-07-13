@@ -138,6 +138,7 @@ def process_temperature_data(spark, input_path, output_path, temperature_data_pa
     dim_temperature_table.write.mode('overwrite') \
                                .parquet(os.path.join(output_path, 'dim_temperature/'))
 
+    dim_temperature_table.printSchema()
 
 def process_demographics_data(spark, input_path, output_path, demographics_data_path):
     '''
@@ -207,9 +208,9 @@ def main():
     temperature_data_path = config['DATA']['TEMPERATURE']
     demographics_data_path = config['DATA']['DEMOGRAPHICS']
     
-    process_immigration_data(spark, input_path, output_path, immigration_data_path, port_mapping_data_path, country_mapping_data_path)    
+    #process_immigration_data(spark, input_path, output_path, immigration_data_path, port_mapping_data_path, country_mapping_data_path)    
     process_temperature_data(spark, input_path, output_path, temperature_data_path) 
-    process_demographics_data(spark, input_path, output_path, demographics_data_path) 
+    #process_demographics_data(spark, input_path, output_path, demographics_data_path) 
     
     spark.stop()
 

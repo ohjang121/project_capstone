@@ -43,8 +43,8 @@ class ProdQueries:
     SELECT date(dt) as temp_report_month,
     city,
     country,
-    avg(float(averagetemperature)) as avg_temp,
-    avg(float(averagetemperatureuncertainty)) as avg_temp_uncertainty
+    avg(double(averagetemperature)) as avg_temp,
+    avg(double(averagetemperatureuncertainty)) as avg_temp_uncertainty
     FROM stg_temperature
     GROUP BY 1,2,3
     '''
@@ -55,12 +55,12 @@ class ProdQueries:
     SELECT city,
     state_code,
     race,
-    float(median_age) as median_age,
+    double(median_age) as median_age,
     int(male_population) as male_population,
     int(female_population) as female_population,
     int(total_population) as total_population,
     int(number_of_veterans) as number_of_veterans,
     int(foreign_born) as foreign_born,
-    float(avg_household_size) as avg_household_size
+    double(avg_household_size) as avg_household_size
     FROM stg_demographics
     '''
