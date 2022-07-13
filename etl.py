@@ -148,15 +148,15 @@ def process_demographics_data(spark, input_path, output_path, demographics_data_
 
     # format columns in snakecase without whitespace
     # define temp view to query
-    df_demo = df_demo.withColumnRenamed('City', 'city')\
-        .withColumnRenamed('State Code', 'state_code')\
-        .withColumnRenamed('Race', 'race')\
-        .withColumnRenamed('Median Age', 'median_age')\ 
-        .withColumnRenamed('Male Population', 'male_population')\ 
-        .withColumnRenamed('Female Population', 'female_population')\
-        .withColumnRenamed('Total Population', 'total_population')\
-        .withColumnRenamed('Number of Veterans', 'number_of_veterans')\
-        .withColumnRenamed('Foreign-born', 'foreign_born')\
+    df_demo = df_demo.withColumnRenamed('City', 'city') \
+        .withColumnRenamed('State Code', 'state_code') \
+        .withColumnRenamed('Race', 'race') \
+        .withColumnRenamed('Median Age', 'median_age') \ 
+        .withColumnRenamed('Male Population', 'male_population') \ 
+        .withColumnRenamed('Female Population', 'female_population') \
+        .withColumnRenamed('Total Population', 'total_population') \
+        .withColumnRenamed('Number of Veterans', 'number_of_veterans') \
+        .withColumnRenamed('Foreign-born', 'foreign_born') \
         .withColumnRenamed('Average Household Size', 'avg_household_size')
     
     df_demo.createOrReplaceTempView('stg_demographics') 
