@@ -52,6 +52,8 @@ Because the end use case is for analytics that require frequent joins and aggreg
 
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/diagrams/immigration_erd.png)
 
+[Link](https://lucid.app/lucidchart/49b9dc0d-8883-458a-9d87-a8c1b0f699fe/edit?viewport_loc=300%2C72%2C1258%2C1432%2CjVTx~_BzH.8Q&invitationId=inv_9872f342-f5a0-4492-b814-d162917f4a92#) to the Lucidchart diagram
+
 Data dictionary for the 4 tables are documented in [immigration_data_dict.yaml](https://github.com/ohjang121/project_capstone/blob/main/diagrams/immigration_data_dict.yaml).
 
 ---
