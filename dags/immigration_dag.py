@@ -50,9 +50,6 @@ dag = DAG('immigration_dag',
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
-
-## need operator for spark etl.py & redshift start
-
 spark_etl = BashOperator(
     task_id='Spark_ETL',
     bash_command=f'python3 {SPARK_ETL_PATH}',
@@ -119,9 +116,6 @@ aws_terminate = BashOperator(
     bash_command=f'python3 {AWS_SETUP_PATH} --delete',
     dag=dag
 )
-
-# need operator for redshift quit
-
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
