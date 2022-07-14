@@ -80,6 +80,24 @@ After confirming the config file path set up, you are ready to run the DAG. For 
 
 6. `AWS_redshift_terminate`: Runs [aws_setup](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py) but with the argument `--delete`. This deletes the IAM role and Redshift cluster created for the data processing.
 
+#### Data Quality Checks
+
+Below images illustrate manual sample data & pkey check in the Redshift query editor.
+
+* Sample Data
+
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_fact_immigration.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_immigrant.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_temperature.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_demographics.png)
+
+* Pkey
+
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_fact_immigration.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_dim_immigrant.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_dim_temperature.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_dim_demographics.png)
+
 ---
 
 ### Step 5: Complete Project Write Up
