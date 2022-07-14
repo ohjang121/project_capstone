@@ -97,27 +97,14 @@ Immigration DAG is set up via [immigration_dag.py](https://github.com/ohjang121/
 Even though the data pipeline is fairly light with minimal cluster configurations, the source datasets' update cadence should be considered heavily to make this decision. As both immigration and temperature data get new batch of data every month, the data pipeline should also run every month with the new datasets. Since the demographics data do not indicate a timestamp and have far less tendency and magnitude to be updated, monthly update for the data pipeline and data source would be optimal for this project. 
 
 #### What-if Analysis
+
 1. The data was increased by 100x: I would continue using Spark for the ETL process and add a task to set up an EMR cluster in the DAG so that it can use parallel computing instead of running it locally (which is possible now). If the business need is large enough and high number of users, I will keep Redshift as the main database to store the production tables and perform analysis there with larger computing power nodes in the configuration set up. If the use case is not as enticing, I would only enable `schema-on-read` and not use Redshift to analyze the data.
 
+2. The pipelines were run on a daily basis by 7am: I would change the existing DAG default_args to run at 7am UTC.
 
-#### Future Design Considerations
-1. The data was increased by 100x.
-	
-	If Spark with standalone server mode can not process 100x data set, we could consider to put data in [AWS EMR](https://aws.amazon.com/tw/emr/?nc2=h_ql_prod_an_emr&whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc) which is a distributed data cluster for processing large data sets on cloud
+3. The database needed to be accessed by 100+ people: As mentioned in the data increase 100x scenario, if the business use case is large, the cost is justified to enable ease of analysis. I will maintain the current ETL process using Spark and continue using Redshift as the main choice of database. With the end goal of enabling analytics, the data models will only be useful if they can be used by the general analyst tech stack preference and familiarity. With Redshift's flexibility in node configurations and multiple user handling, I will encourage users to use Redshift to access the data instead of `schema-on-read` via S3.
 
-2. The data populates a dashboard that must be updated on a daily basis by 7am every day.
-
-	[Apache Airflow](https://airflow.apache.org) could be used for building up a ETL data pipeline to regularly update the date and populate a report. Apache Airflow also integrate with Python and AWS very well. More applications can be combined together to deliever more powerful task automation.
-
-3. The database needed to be accessed by 100+ people.
-
-	[AWS Redshift](https://aws.amazon.com/tw/redshift/?nc2=h_ql_prod_db_rs&whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc) can handle up to 500 connections. If this SSOT database will be accessed by 100+ people, we can move this database to Redshift with confidence to handle this request. Cost/Benefit analysis will be needed if we are going be implement this cloud solution.
-
----
-
-### Future Improvements
-There are several incompletions within these data sets. We will need to collect more data to get a more complete SSOT database.
-
-1. Immigration data set is based at 2016 but temperature data set only get to 2013 which is not enough for us to see the temperature change at 2016.
-	
-2. Missing state and city in label description file. This makes it hard to join immigration tables and demography tables.
+### Next Steps / Future Considerations
+* EMR Cluster set up in the DAG for more efficient spark job instead of local mode
+* Airflow connection update handling programmatically instead of manual Airflow UI intervention as needed
+* Gather other sources of data to do more interesting analysis
