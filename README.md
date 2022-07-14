@@ -46,43 +46,26 @@ Before exploring the raw datasets, I uploaded them to my public S3 bucket - `uda
 
 During the raw dataset uploading step, I extracted mapping of alphanumeric codes to country / port from [I94 Immigration Data Descriptions](https://github.com/ohjang121/project_capstone/blob/main/I94_SAS_Labels_Descriptions.SAS) into 2 separate csvs - `i94citres_country_mapping.csv` and `i94port_city_state_mapping.csv`. These mapping data are crucial to translate codified location columns in the immigration data.
 
-[load_prod_data.py](https://github.com/ohjang121/project_capstone/blob/main/dags/load_prod_data.py) contains 4 spark sql queries that transform the raw datasets into more meaningful data with correct data type formatting. They also use the country / port mapping tables to get corresponding location values in the immigration data. Using those queries as inputs, [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) cleans and drops missing or wrong values with detailed documentation for each step (e.g. drop any rows that do not have gender = male or female). Finally, it adds surrogate keys using `row_number()` function for 2 dimensional tables that do not have primary keys.
-
-
-#### Cleaning Steps
-
-1. Transform arrdate, depdate from SAS time format to pandad.datetime
-2. Parse description file to get auxiliary dimension table - country_code, city _code, state _code, mode, visa
-3. Tranform city, state to upper case to match city _code and state _code table
-
-Please refer to [Capstone_Project.ipynb](https://github.com/KentHsu/Udacity-DEND/blob/main/Capstone%20Project/Capstone_Project.ipynb).
-
-(This step was completed in Udacity workspace as pre-steps for building up and testing the ETL data pipeline. File paths should be modified if notebook is run locally.)
+[load_prod_data.py](https://github.com/ohjang121/project_capstone/blob/main/dags/load_prod_data.py) contains 4 spark sql queries that transform the raw datasets into more meaningful data with correct data type formatting. They also use the country / port mapping tables to get corresponding location values in the immigration data. Using those queries as inputs, [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) cleans and drops missing or wrong values with detailed documentation for each step (e.g. drop any rows that do not have gender = male or female). Finally, it adds surrogate keys using `row_number()` function in 2 dimensional tables that do not have primary keys.
 
 ---
 
 ### Step 3: Define the Data Model
 
-#### Conceptual Data Model
-Since the purpose of this data warehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
+#### Design Data Model
+Because the end use case is for analytics that require frequent joins and aggregations, we will model the datasets in a star schema. As there are not that many datasets anyways, there is barely any risk in high data redundancy or lack of data integrity
 
-* Star Schema
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/immigration_erd.png)
 
-	![alt text](https://github.com/KentHsu/Udacity-DEND/blob/main/Capstone%20Project/images/conceptual_data_model.png)
+#### Design Data Pipeline
 
-#### Data Pipeline Build Up Steps
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/immigration_dag_big.png)
 
-1. Assume all data sets are stored in S3 buckets as below
-	* `[Source_S3_Bucket]/immigration/18-83510-I94-Data-2016/*.sas7bdat`
-	* `[Source_S3_Bucket]/I94_SAS_Labels_Descriptions.SAS`
-	* `[Source_S3_Bucket]/temperature/GlobalLandTemperaturesByCity.csv`
-	* `[Source_S3_Bucket]/demography/us-cities-demographics.csv`
-2. Follow by Step 2 – Cleaning step to clean up data sets
-3. Transform immigration data to 1 fact table and 2 dimension tables, fact table will be partitioned by state
-4. Parsing label description file to get auxiliary tables
-5. Transform temperature data to dimension table
-6. Split demography data to 2 dimension tables
-7. Store these tables back to target S3 bucket
+Immigration DAG is set up via [immigration_dag.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_dag.py). For each task:
+
+1. Spark_ETL: Runs [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) that performs ETL using the raw datasets stored in `udacity-capstone-joh/staging` S3 bucket to `udacity-capstone-joh/production` S3 bucket. All transformations are done in Spark, no need for additional transformation in Redshift.
+    * Note: If [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) fails at dataframe read step with errors such as `java.lang.NumberFormatException: For input string: "64M"` or other unknown Java errors, it means your environment is not set up correctly with the SparkSession's config file. If you encounter this issue, you need to set up an EMR cluster with pre-built Spark configurations to avoid errors. Once you have the EMR cluster set up, scp [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) with `dl_cfg` file and [load_prod_data.py](https://github.com/ohjang121/project_capstone/blob/main/dags/load_prod_data.py) file to the EMR cluster and run `spark-submit immigration_spark_etl.py`. Once you check output parquet files are written in the `udacity-capstone-joh/production` S3 bucket with appropriate file size per table, you can safely mark this task `Success` and run the remaining downstream tasks. 
+3. AWS_redshift_setup: Runs [aws_setup](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py) to create a Redshift cluster.
 
 ---
 
