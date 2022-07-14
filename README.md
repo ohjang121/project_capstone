@@ -50,9 +50,9 @@ During the raw dataset uploading step, I extracted mapping of alphanumeric codes
 #### Design Data Model
 Because the end use case is for analytics that require frequent joins and aggregations, we will model the datasets in a star schema. As there are not that many datasets anyways, there is barely any risk in high data redundancy or lack of data integrity.
 
-![alt text](https://github.com/ohjang121/project_capstone/blob/main/immigration_erd.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/diagrams/immigration_erd.png)
 
-Data dictionary for the 4 tables are documented in [immigration_data_dict.yaml](https://github.com/ohjang121/project_capstone/blob/main/immigration_data_dict.yaml).
+Data dictionary for the 4 tables are documented in [immigration_data_dict.yaml](https://github.com/ohjang121/project_capstone/blob/main/diagrams/immigration_data_dict.yaml).
 
 ---
 
@@ -60,7 +60,7 @@ Data dictionary for the 4 tables are documented in [immigration_data_dict.yaml](
 
 #### Design Data Pipeline
 
-![alt text](https://github.com/ohjang121/project_capstone/blob/main/immigration_dag_big.png)
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/diagrams/immigration_dag_big.png)
 
 Immigration DAG is set up via [immigration_dag.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_dag.py). Before running the DAG, you need to ensure that the config file path, [dl.cfg](https://github.com/ohjang121/project_capstone/blob/main/dl.cfg), is correctly set up in [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py#L20) and [aws_setup.py](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py#L169). Otherwise, the scripts will fail due to empty key variables.
 
