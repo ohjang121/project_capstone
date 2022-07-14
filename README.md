@@ -66,6 +66,9 @@ Data dictionary for the 4 tables are documented in [immigration_data_dict.yaml](
 
 Immigration DAG is set up via [immigration_dag.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_dag.py). Before running the DAG, you need to ensure that the config file path, [dl.cfg](https://github.com/ohjang121/project_capstone/blob/main/dl.cfg), is correctly set up in [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py#L20) and [aws_setup.py](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py#L169). Otherwise, the scripts will fail due to empty key variables.
 
+Also, make sure the `airflow scheduler` command is run in the `dags/` directory (or ensure [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) and [aws_setup](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py) are in the current directory of the Airflow set up). `BashOperator` in the [immigration_dag.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_dag.py) runs the python scripts inside the current directory
+that `airflow scheduler` is invoked at. Otherwise, the python scripts will not be recognized by the DAG.
+
 After confirming the config file path set up, you are ready to run the DAG. For each task:
 
 1. `Spark_ETL`: Runs [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) that performs ETL using the raw datasets stored in `udacity-capstone-joh/staging` S3 bucket to `udacity-capstone-joh/production` S3 bucket. All transformations are done in Spark, no need for additional transformation in Redshift.
