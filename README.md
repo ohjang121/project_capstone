@@ -22,8 +22,17 @@ Below are recommended steps to tackle the project:
 1. [I94 Immigration Data](https://travel.trade.gov/research/reports/i94/historical/2016.html): I94 immigration data from Apr 2016. Contains ~3M rows. Stored in parquet.
 2. [World Temperature Data](https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data): World temperature data per city and country. Contains ~1M rows. Stored in csv.
 3. [U.S. City Demographic Data](https://public.opendatasoft.com/explore/dataset/us-cities-demographics/export/): Demographics data per city and state in the U.S. Contains thousands of rows. Stored in csv.
+4. [I94 Immigration Data Descriptions](https://github.com/ohjang121/project_capstone/blob/main/I94_SAS_Labels_Descriptions.SAS): This SAS file contains the data dictionary and mapping of alphanumeric codes to country / port. I extracted this data into 2 separate csvs - `i94citres_country_mapping.csv` and `i94port_city_state_mapping.csv` - which are stored in my public S3 bucket `udacity-capstone-joh/staging`.
 
-With 2 out of the 3 data sources exceeding 1M rows of data and have 2 different file types (parquet, csv), they meet the data requirement for the project.
+With 2 out of the 4 data sources exceeding 1M rows of data and have 2 different file types (parquet, csv), they meet the data requirement for the project.
+
+#### Tools
+
+1. Spark: I used PySpark to explore and assess the raw datasets. 2 reasons were 1) 2 of the datasets had few millions rows of data, which require decent computing power for fast querying, and 2) `schema-on-read` that enables SQL queries to transform the datasets as if they were already loaded in a database. [immigration_spark_etl.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_spark_etl.py) incorporates Spark in it.
+2. AWS Redshift: I used Redshift to build the data models and load transformed data through Spark. End use case is for analytics, and creating a data warehouse to store production data in tables would allow the target audience of analysts to access the production data more easily. Redshift usage would not be necessary if I force the users to strictly rely on `schema-on-read` and load production data from S3 by themselves. However, that seemed counterintuitive for the end use case of analytics and the data models' target audience. [aws_setup](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py) sets up a new Redshift cluster, and various tasks in [immigration_dag.py](https://github.com/ohjang121/project_capstone/blob/main/dags/immigration_dag.py) create tables and load production data into them.
+3. AWS S3: I used S3 for data storage. It works well with Spark and Redshift to extract and load datasets as desired.
+4. Apache Airflow: I used Airflow to orchestrate all tasks needed to be done to design and create the data models. Instead of running separate scripts one by one, using a dependency management tool to orchestrate all necessary steps seemed like a sound option.
+
 
 #### End Use Case
 
@@ -33,7 +42,9 @@ End use case for this project will be analytics - users will be able to use the 
 
 ### Step 2: Explore and Assess the Data
 
-#### Explore the Data 
+Before exploring the raw datasets, I uploaded them to my public S3 bucket - `udacity-capstone-joh/staging`. This enables any user to explore the raw datasets easily without having to clone this repo or download the datasets locally. 
+
+
 
 1. Use pandas for exploratory data analysis to get an overview on these data sets
 2. Split data sets to dimensional tables and change column names for better understanding
