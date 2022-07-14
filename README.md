@@ -98,11 +98,11 @@ Even though the data pipeline is fairly light with minimal cluster configuration
 
 #### What-if Analysis
 
-1. The data was increased by 100x: I would continue using Spark for the ETL process and add a task to set up an EMR cluster in the DAG so that it can use parallel computing instead of running it locally (which is possible now). If the business need is large enough and high number of users, I will keep Redshift as the main database to store the production tables and perform analysis there with larger computing power nodes in the configuration set up. If the use case is not as enticing, I would only enable `schema-on-read` and not use Redshift to analyze the data.
+1. The data was increased by 100x: I would continue using Spark for the ETL process and add a task to set up an EMR cluster in the DAG so that it can use parallel computing instead of running it locally (which is possible now). If the business need is large enough with high number of users, I will keep Redshift as the main database to store the production tables and perform analysis there with larger computing power nodes in the configuration set up. If the use case is not as enticing, I would only enable `schema-on-read` and not use Redshift to analyze the data.
 
 2. The pipelines were run on a daily basis by 7am: I would change the existing DAG default_args to run at 7am UTC.
 
-3. The database needed to be accessed by 100+ people: As mentioned in the data increase 100x scenario, if the business use case is large, the cost is justified to enable ease of analysis. I will maintain the current ETL process using Spark and continue using Redshift as the main choice of database. With the end goal of enabling analytics, the data models will only be useful if they can be used by the general analyst tech stack preference and familiarity. With Redshift's flexibility in node configurations and multiple user handling, I will encourage users to use Redshift to access the data instead of `schema-on-read` via S3.
+3. The database needed to be accessed by 100+ people: As mentioned in the data increase 100x scenario, if the business use case is large, the cost is justified to enable ease of analysis. I will maintain the current ETL process using Spark and continue using Redshift as the main choice of database. With the end goal of enabling analytics, the data models will only be useful if they can be used by the general analyst's tech stack preference and familiarity. With Redshift's flexibility in node configurations and multiple user handling, I will encourage users to use Redshift to access the data instead of `schema-on-read` via S3.
 
 ### Next Steps / Future Considerations
 * EMR Cluster set up in the DAG for more efficient spark job instead of local mode
