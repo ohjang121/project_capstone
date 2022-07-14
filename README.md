@@ -5,7 +5,7 @@ Objective: Combine all data engineering concepts from the Udacity Data Engineeri
 ### Project Summary
 In this project, I integrate immigration, temperature, and demographics data to design and build data models for analytics purpose. I chose this recommended project with my strong interest in immigration as an immigrant myself.
 
-Below are recommended steps to tackle the project:
+Below are the recommended steps to tackle the project:
 
 * Step 1: Scope the Project and Gather Data
 * Step 2: Explore and Assess the Data
