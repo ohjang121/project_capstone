@@ -5,6 +5,8 @@ Objective: Combine all data engineering concepts from the Udacity Data Engineeri
 ### Project Summary
 In this project, I integrate immigration, temperature, and demographics data to design and build data models for analytics purpose. I chose this recommended project with my strong interest in immigration as an immigrant myself.
 
+With the final data model, one can explore questions such as "does a city's trailing 3 months avg temperature affect the number of immigration flowing into the destination city?" or "what percentage of the total immigration number is covered by the top 10 cities with largest total population?" It will enable analysis on how immigration is affected by other factors such as weather and demographics in varying locations and timeframe.
+
 Below are the recommended steps to tackle the project:
 
 * Step 1: Scope the Project and Gather Data
@@ -88,16 +90,47 @@ After confirming the config file path set up, you are ready to run the DAG. For 
 
 #### Data Quality Checks
 
+##### Analytics
+
+I ran a sample analysis to ensure the tables can be joined together for analytics. I aimed to answer the following question: "What is the total number of immigration per city for the top 10 cities with highest total_population?"
+
+**Analysis query**
+```
+with top_10_city_demographics as (
+select city,
+state_code,
+total_population
+from public.dim_demographics
+group by 1,2,3
+order by 3 desc
+limit 10)
+
+select i.arrival_city,
+c.total_population,
+count(i.immigration_id) as immigration_count
+from public.fact_immigration i
+join top_10_city_demographics c on lower(i.arrival_city) = lower(c.city) and lower(i.arrival_state) = lower(c.state_code)
+group by 1,2
+order by 3 desc
+;
+```
+
+**Output**
+
+![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/analysis_example.png)
+
+##### Basics
+
 Below images illustrate manual sample data & pkey check in the Redshift query editor.
 
-* Sample Data
+**Sample Data**
 
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_fact_immigration.png)
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_immigrant.png)
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_temperature.png)
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/sample_data_dim_demographics.png)
 
-* Pkey
+**Pkey**
 
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_fact_immigration.png)
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/data_quality_proof/pkey_check_dim_immigrant.png)
