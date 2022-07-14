@@ -31,7 +31,7 @@ With 2 out of the 4 data sources exceeding 1M rows of data and have 2 different 
 
 #### End Use Case
 
-End use case for this project will be analytics - users will be able to use the data models to analyze how temperature and demographics for a given region may affect its immigration trend.
+End use case for this project will be analytics - users will be able to use the data models to analyze how temperature and demographics for a given region may affect the immigration trend.
 
 ---
 
