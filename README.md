@@ -48,7 +48,7 @@ During the raw dataset uploading step, I extracted mapping of alphanumeric codes
 ### Step 3: Define the Data Model
 
 #### Design Data Model
-Because the end use case is for analytics that require frequent joins and aggregations, we will model the datasets in a star schema. As there are not that many datasets anyways, there is barely any risk in high data redundancy or lack of data integrity
+Because the end use case is for analytics that require frequent joins and aggregations, we will model the datasets in a star schema. As there are not that many datasets anyways, there is barely any risk in high data redundancy or lack of data integrity.
 
 ![alt text](https://github.com/ohjang121/project_capstone/blob/main/immigration_erd.png)
 
