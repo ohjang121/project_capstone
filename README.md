@@ -74,7 +74,7 @@ Immigration DAG is set up via [immigration_dag.py](https://github.com/ohjang121/
 
 4. `Load_table_to_redshift`: Runs [pq_stage_redshift.py](https://github.com/ohjang121/project_capstone/blob/main/plugins/operators/pq_stage_redshift.py) operator and copies the production data written in parquet into each table. All loads are formatted as parquet. As mentioned in Step 1, there is no need to do additional transformation to load data into the production tables. This is to allow `schema-on-read` to have identical output as querying in the Redshift database.
 
-5. `Run_data_quality_checks`: Runs [data_quality.py](https://github.com/ohjang121/project_capstone/blob/main/plugins/operators/data_quality.py) that achieves 2 things per table: row_count > 0 & primary key checks. These basic checks will ensure that the tables are loaded correctly without any errors. It also logs the number of rows per table.
+5. `Run_data_quality_checks`: Runs [data_quality.py](https://github.com/ohjang121/project_capstone/blob/main/plugins/operators/data_quality.py) operator that achieves 2 things per table: row_count > 0 & primary key checks. These basic checks will ensure that the tables are loaded correctly without any errors. It also logs the number of rows per table.
 
 6. `AWS_redshift_terminate`: Runs [aws_setup](https://github.com/ohjang121/project_capstone/blob/main/dags/aws_setup.py) but with the argument `--delete`. This deletes the IAM role and Redshift cluster created for the data processing.
 
