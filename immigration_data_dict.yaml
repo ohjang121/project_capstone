@@ -1,0 +1,126 @@
+version: 2
+
+models:
+-   name: fact_immigration
+    description: Fact table that stores U.S. I94 immigration activities in Apr 2016  
+
+    columns:
+    -   name: immigration_id
+        description: Primary key per I94 immigration record 
+
+    -   name: imm_year
+        description: Year of I94 immigration record
+
+    -   name: imm_month
+        description: Month of I94 immigration record
+
+    -   name: transport_code
+        description: Mode of transportation - can be Air, Sea, Land, or Not reported 
+
+    -   name: arrival_city_code
+        description: 3 letter code to indicate city port
+
+    -   name: arrival_city
+        description: City corresponding to arrival_city_code, based on port_mapping
+
+    -   name: arrival_state
+        description: State of arrival (coalesced with state corresponding to arrival_city_code, based on port_mapping)
+
+    -   name: arrival_date
+        description: Date of I94 immigration arrival
+
+    -   name: departure_date
+        description: Date of I94 immigration departure
+
+    -   name: travel_purpose
+        description: Travel purpose of the immigration - can be Business, Pleasure, or Student
+
+    -   name: visa_type
+        description: Visa type for the I94 immigration record
+
+    -   name: visa_issued_state
+        description: Department of state that issued the visa
+
+    -   name: airline
+        description: Airline to get to the U.S.
+
+-   name: dim_immigrant
+    description: Dimensional table that stores U.S. I94 immigrant personal data
+
+    columns:
+    -   name: immigration_id
+        description: Primary key per I94 immigration record 
+
+    -   name: citizenship_country
+        description: Immigrant citizenship country
+
+    -   name: residence_country
+        description: Immigrant residence country
+
+    -   name: age
+        description: Immigrant age
+
+    -   name: birthyear
+        description: Immigrant birth year
+
+    -   name: gender
+        description: Immigrant gender (only M or F)
+
+-   name: dim_temperature
+    description: Dimensional table that stores U.S. city avg temperature data per city since 1980
+
+    columns:
+    -   name: temp_id
+        description: Surrogate key to be used for primary key
+
+    -   name: temp_report_month
+        description: Report month for the given temperature data - monthly since Jan 1980
+
+    -   name: city
+        description: City name
+
+    -   name: country
+        description: Country name - filted to United States only
+
+    -   name: avg_temp
+        description: Average temperature per temp_report_month || city || country
+
+    -   name: avg_temp_uncertainty
+        description: Average temperature uncertainty per temp_report_month || city || country
+
+-   name: dim_demographics
+    description: Dimensional table that stores U.S. demographics data per city and state
+
+    columns:
+    -   name: demo_id
+        description: Surrogate key to be used for primary key
+
+    -   name: city
+        description: City name
+
+    -   name: state_code
+        description: State code
+
+    -   name: race  
+        description: Racial identity (e.g. White)
+
+    -   name: median_age
+        description: Median age
+
+    -   name: male_population
+        description: Male population
+
+    -   name: female_population
+        description: Female population
+
+    -   name: total_population
+        description: Total population
+
+    -   name: number_of_veterans
+        description: Number of veterans 
+
+    -   name: foreign_born
+        description: Number of foreign born people 
+
+    -   name: avg_household_size
+        description: Average household size 
